@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Grades</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .student-info {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .value {
+            color: #333;
+        }
+        
+        /* Summary Cards */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .summary-card.total {
+            background: linear-gradient(135deg, #00c896 0%, #00a876 100%);
+        }
+        
+        .summary-card.average {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .summary-card.grade {
+            background: linear-gradient(135deg, #f5a623 0%, #f78913 100%);
+        }
+        
+        .card-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        /* Status Indicator */
+        .status-indicator {
+            text-align: center;
+            padding: 40px 20px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        
+        .status-indicator.pass {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 3px solid #28a745;
+        }
+        
+        .status-indicator.fail {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border: 3px solid #dc3545;
+        }
+        
+        .status-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .status-indicator h2 {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .status-indicator.pass h2 {
+            color: #28a745;
+        }
+        
+        .status-indicator.fail h2 {
+            color: #dc3545;
+        }
+        
+        .card-value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        
+        .grades-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 22px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .grades-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .grade-card {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .grade-header {
+            padding: 15px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .subject-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .grade-badge {
+            font-size: 20px;
+            font-weight: bold;
+            background-color: rgba(255, 255, 255, 0.3);
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+        
+        .grade-body {
+            padding: 15px;
+            background-color: #f8f9fa;
+        }
+        
+        .grade-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .grade-detail:last-child {
+            margin-bottom: 0;
+        }
+        
+        .grade-detail-label {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .grade-detail-value {
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .pass {
+            color: #28a745;
+        }
+        
+        .fail {
+            color: #e74c3c;
+        }
+        
+        .grading-scale {
+            background-color: #f0f4ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .grading-scale h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .scale-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+        }
+        
+        .scale-item {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            border: 2px solid #667eea;
+        }
+        
+        .scale-item.a { border-color: #00c896; color: #00c896; }
+        .scale-item.b { border-color: #667eea; color: #667eea; }
+        .scale-item.c { border-color: #f5a623; color: #f5a623; }
+        .scale-item.d { border-color: #ff9f43; color: #ff9f43; }
+        .scale-item.f { border-color: #e74c3c; color: #e74c3c; }
+        
+        .button-group {
+            text-align: center;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: transform 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 5px;
+            padding: 12px;
+            margin-top: 10px;
+            color: #155724;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Your Academic Dashboard</h1>
+            {% if new_student %}
+            <div class="success-message">
+                ✓ Student successfully added to the system!
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="student-info">
+            <div class="info-row">
+                <span class="label">Student ID:</span>
+                <span class="value">{{ student_id }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Name:</span>
+                <span class="value">{{ student.name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Email:</span>
+                <span class="value">{{ student.email }}</span>
+            </div>
+        </div>
+        
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="summary-card total">
+                <div class="card-label">Total Marks</div>
+                <div class="card-value">{{ total_marks }}/600</div>
+            </div>
+            <div class="summary-card average">
+                <div class="card-label">Average Percentage</div>
+                <div class="card-value">{{ average_percentage }}%</div>
+            </div>
+            <div class="summary-card grade">
+                <div class="card-label">Overall Grade</div>
+                <div class="card-value">{{ overall_grade }}</div>
+            </div>
+        </div>
+        
+        <!-- Status Indicator -->
+        <div class="status-indicator {% if passing_status %}pass{% else %}fail{% endif %}">
+            <div class="status-icon">
+                {% if passing_status %}
+                    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                        <circle cx="40" cy="40" r="38" fill="#28a745" stroke="white" stroke-width="3"/>
+                        <path d="M25 40L35 50L55 30" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h2>PASS</h2>
+                {% else %}
+                    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                        <circle cx="40" cy="40" r="38" fill="#dc3545" stroke="white" stroke-width="3"/>
+                        <path d="M25 25L55 55M55 25L25 55" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                    </svg>
+                    <h2>FAIL</h2>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Grading Scale -->
+        <div class="grading-scale">
+            <h3>📋 Grading Scale Reference</h3>
+            <div class="scale-grid">
+                <div class="scale-item a">A: 90-100%</div>
+                <div class="scale-item b">B: 80-89%</div>
+                <div class="scale-item c">C: 70-79%</div>
+                <div class="scale-item d">D: 60-69%</div>
+                <div class="scale-item f">F: Below 60%</div>
+                <div class="scale-item" style="border-color: #28a745; color: #28a745;">Passing: ≥ 60%</div>
+            </div>
+        </div>
+        
+        <!-- Subject Grades -->
+        <div class="grades-section">
+            <h2>📚 Subject Grades</h2>
+            <div class="grades-grid">
+                {% for subject, details in grades_with_details.items() %}
+                    <div class="grade-card">
+                        <div class="grade-header" style="background-color: {{ details.color }};">
+                            <span class="subject-name">{{ subject }}</span>
+                            <span class="grade-badge">{{ details.grade }}</span>
+                        </div>
+                        <div class="grade-body">
+                            <div class="grade-detail">
+                                <span class="grade-detail-label">Marks:</span>
+                                <span class="grade-detail-value">{{ details.marks }}/100</span>
+                            </div>
+                            <div class="grade-detail">
+                                <span class="grade-detail-label">Percentage:</span>
+                                <span class="grade-detail-value">{{ details.marks }}%</span>
+                            </div>
+                            <div class="grade-detail">
+                                <span class="grade-detail-label">Status:</span>
+                                <span class="grade-detail-value {% if details.status == 'Pass' %}pass{% else %}fail{% endif %}">
+                                    {{ details.status }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <a href="/" class="btn">← Back to Login</a>
+        </div>
+    </div>
+</body>
+</html>

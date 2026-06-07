@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Student</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .grade-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .grade-input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .grade-input-group label {
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        
+        .grade-input-group input {
+            padding: 10px;
+            font-size: 14px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        button, a {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        button[type="submit"] {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+        }
+        
+        .cancel-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .cancel-btn:hover {
+            transform: translateY(-2px);
+            background-color: #5a6268;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            color: #333;
+            font-weight: 600;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>➕ Add New Student</h1>
+        <p class="subtitle">Enter student information and grades</p>
+        
+        <form method="POST" action="/add-student">
+            <div class="section-title">Personal Information</div>
+            
+            <div class="form-group">
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" name="name" placeholder="Enter student name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="email" placeholder="Enter student email" required>
+            </div>
+            
+            <div class="section-title">Subject Grades (0-100)</div>
+            
+            <div class="grade-inputs">
+                <div class="grade-input-group">
+                    <label for="maths">Maths:</label>
+                    <input type="number" id="maths" name="maths" min="0" max="100" value="0" required>
+                </div>
+                <div class="grade-input-group">
+                    <label for="english">English:</label>
+                    <input type="number" id="english" name="english" min="0" max="100" value="0" required>
+                </div>
+                <div class="grade-input-group">
+                    <label for="telugu">Telugu:</label>
+                    <input type="number" id="telugu" name="telugu" min="0" max="100" value="0" required>
+                </div>
+                <div class="grade-input-group">
+                    <label for="science">Science:</label>
+                    <input type="number" id="science" name="science" min="0" max="100" value="0" required>
+                </div>
+                <div class="grade-input-group">
+                    <label for="commerce">Commerce:</label>
+                    <input type="number" id="commerce" name="commerce" min="0" max="100" value="0" required>
+                </div>
+                <div class="grade-input-group">
+                    <label for="history">History:</label>
+                    <input type="number" id="history" name="history" min="0" max="100" value="0" required>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button type="submit">✓ Submit & View Dashboard</button>
+                <a href="/" class="cancel-btn">← Cancel</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
